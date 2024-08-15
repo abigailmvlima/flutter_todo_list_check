@@ -88,25 +88,37 @@ class _HomeState extends State<Home> {
             child: ListView.builder(
               padding: const EdgeInsets.only(top: 10.0),
               itemCount: _todoList.length,
-              itemBuilder: (context, index) {
-                return CheckboxListTile(
-                  title: Text(_todoList[index]["title"]),
-                  value: _todoList[index]["ok"],
-                  onChanged: (bool? value) {
-                    setState(() {
-                      _todoList[index]["ok"] = value;
-                      _saveData();  // Salva os dados após alterar o estado de uma tarefa
-                    });
-                  },
-                );
-              },
+              itemBuilder: buildItem),
             ),
-          ),
         ],
       ),
     );
   }
 
+  Widget buildItem(context, index) {
+    return Dismissible(
+      key: Key(DateTime.now().millisecondsSinceEpoch.toString()),
+      background: Container(
+        color: Colors.red,
+        child: const Align(
+          alignment: Alignment(-0.9, 0.0),
+          child: Icon(Icons.delete, color: Colors.white,),
+        ),
+      ),
+      direction: DismissDirection.startToEnd,
+      child: CheckboxListTile(
+        title: Text(_todoList[index]["title"]),
+        value: _todoList[index]["ok"],
+        onChanged: (bool? value) {
+          setState(() {
+            _todoList[index]["ok"] = value;
+            _saveData();  // Salva os dados após alterar o estado de uma tarefa
+          });
+        },
+      ),
+    );
+  }
+  
   Future<File> _getFile() async {
     final directory = await getApplicationDocumentsDirectory();
     return File("${directory.path}/data.json");
